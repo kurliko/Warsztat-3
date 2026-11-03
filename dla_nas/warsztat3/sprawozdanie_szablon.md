@@ -32,9 +32,6 @@
 | Parametr | Użyta wartość |
 |---|---|
 | Model | _[domyślnie yolo11n.pt]_ |
-| Wersja ultralytics | _[uzupełnijcie]_ |
-| Wersja torch | _[uzupełnijcie]_ |
-| Wersja opencv-python | _[uzupełnijcie]_ |
 | Porównywane progi ufności | _[domyślnie 0,25 i 0,60]_ |
 | Próg detekcji w `detect` | _[domyślnie 0,10]_ |
 | Urządzenie | _[CPU]_ |
