@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>YOLO jako czujnik w minigrze</title>
+<style>
+  @page { size: 960px 540px; margin: 0; }
+  :root { --ink: #16252e; --muted: #5a6b75; --deep: #12343f; --zone: #f2b632; --zone-soft: #fdf3d8; --line: #d9e1e5; --tint: #f3f6f7; --ok: #1f8a4c; --bad: #c0392b; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { background: #fff; }
+  body { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; color: var(--ink); font-size: 18px; line-height: 1.35; }
+
+  .slide { position: relative; width: 960px; height: 540px; overflow: hidden; break-after: page; padding: 104px 48px 34px; }
+  .slide:last-child { break-after: auto; }
+
+  /* Motyw: pasek nagłówka ze strefą, czyli środkową jedną trzecią szerokości slajdu. */
+  .head { position: absolute; top: 0; left: 0; width: 960px; height: 78px; background: var(--deep); color: #fff; display: flex; align-items: center; padding: 0 48px; }
+  .head h1 { font-size: 34px; font-weight: 600; letter-spacing: 0.2px; }
+  .head::after { content: ""; position: absolute; left: 320px; width: 320px; bottom: 0; height: 7px; background: var(--zone); }
+  .num { position: absolute; right: 22px; bottom: 12px; font-size: 13px; color: var(--muted); }
+
+  table { border-collapse: collapse; width: 100%; font-size: 16.5px; }
+  th { background: var(--deep); color: #fff; font-weight: 600; text-align: left; padding: 7px 12px; }
+  td { padding: 7px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--tint); }
+  code { font-family: Consolas, "DejaVu Sans Mono", monospace; font-size: 0.93em; }
+  ol, ul { padding-left: 24px; }
+  li { margin-bottom: 5px; }
+  strong { font-weight: 650; }
+  .lead { font-size: 21px; margin-bottom: 16px; }
+  .callout { background: var(--zone-soft); border-left: 6px solid var(--zone); padding: 11px 16px; }
+  .two { display: grid; gap: 28px; align-items: start; }
+  .fig { width: 100%; display: block; border: 1px solid var(--line); }
+  .caption { font-size: 13.5px; color: var(--muted); margin-top: 5px; }
+
+  /* Slajd tytułowy: trzy kolumny, środkowa to strefa. */
+  .title { padding: 0; background: var(--deep); color: #fff; }
+  .title .band { position: absolute; left: 320px; width: 320px; height: 14px; background: var(--zone); }
+  .title .kicker { font-size: 18px; color: var(--zone); font-weight: 600; margin-bottom: 18px; }
+  .title .text { position: absolute; left: 64px; right: 64px; top: 118px; }
+  .title h1 { font-size: 58px; line-height: 1.08; font-weight: 700; }
+  .title .sub { font-size: 24px; margin-top: 20px; color: #dbe6ea; }
+  .title .authors { position: absolute; left: 64px; bottom: 44px; font-size: 18px; color: #dbe6ea; }
+  .title .authors strong { color: var(--zone); }
+
+  /* Macierz czterech wyników. */
+  .matrix th:first-child { background: #fff; }
+  .matrix td, .matrix th { text-align: center; padding: 13px 12px; font-size: 18px; }
+  .matrix td:first-child { text-align: left; font-weight: 650; background: var(--tint); }
+  .matrix tr:nth-child(even) td { background: transparent; }
+  .matrix tr:nth-child(even) td:first-child { background: var(--tint); }
+  .good { color: var(--ok); font-weight: 650; }
+  .wrong { color: var(--bad); font-weight: 650; }
+
+  /* Przepływ danych. */
+  .flow { display: flex; align-items: stretch; gap: 8px; margin-top: 22px; }
+  .box { flex: 1; border: 1px solid var(--line); border-top: 6px solid var(--deep); padding: 12px 14px; }
+  .box.mine { border-top-color: var(--zone); background: var(--zone-soft); }
+  .box h2 { font-size: 19px; font-weight: 650; margin-bottom: 4px; }
+  .box p { font-size: 15.5px; color: var(--muted); }
+  .box.mine p { color: var(--ink); }
+  .arrow { align-self: center; font-size: 26px; color: var(--muted); }
+
+  /* Plan pracy. */
+  .plan { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .step { border: 1px solid var(--line); border-top: 6px solid var(--deep); padding: 16px 13px; height: 238px; background: #fff; }
+  .step.key { border-top-color: var(--zone); background: var(--zone-soft); }
+  .step .time { font-size: 15px; color: var(--muted); }
+  .step h2 { font-size: 20px; font-weight: 650; margin: 8px 0 14px; }
+  .step p { font-size: 17px; line-height: 1.35; }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .card { border: 1px solid var(--line); padding: 18px 20px; }
+  .card h2 { font-size: 21px; font-weight: 650; margin-bottom: 10px; }
+  .chips { display: flex; gap: 10px; margin-top: 14px; }
+  .chip { background: var(--deep); color: #fff; font-size: 14.5px; font-weight: 600; padding: 6px 13px; }
+</style>
+</head>
+<body>
+
+<section class="slide title">
+  <div class="band" style="top:0"></div>
+  <div class="band" style="bottom:0"></div>
+  <div class="text">
+    <p class="kicker">Warsztat 3 · Sztuczna inteligencja w grach i rozszerzonej rzeczywistości</p>
+    <h1>YOLO jako czujnik<br>w minigrze</h1>
+    <p class="sub">Czyli kiedy gra powinna uwierzyć sieci neuronowej?</p>
+  </div>
+  <!-- Tutaj wpiszcie skład zespołu, a potem wygenerujcie PDF zgodnie z README.md. -->
+  <p class="authors"><strong>Autorzy:</strong> [uzupełnijcie skład zespołu]</p>
+</section>
+
+<section class="slide">
+  <div class="head"><h1>Problem</h1></div>
+  <p class="lead"><strong>Minigra:</strong> pokaż butelkę w oznaczonej strefie obrazu, a odblokujesz nagrodę.</p>
+  <ul>
+    <li>Oczy gry to gotowa sieć YOLO. Nie trenujemy jej.</li>
+    <li>O nagrodzie decyduje <strong>reguła napisana przez Was</strong>.</li>
+    <li>Zamiast kamery używamy 12 przygotowanych zdjęć, takich samych dla wszystkich zespołów.</li>
+  </ul>
+  <div class="flow">
+    <div class="box"><h2>Zdjęcie</h2><p>12 gotowych obrazów</p></div>
+    <span class="arrow">→</span>
+    <div class="box"><h2>YOLO</h2><p>klasa, ramka, ufność</p></div>
+    <span class="arrow">→</span>
+    <div class="box mine"><h2>Reguła gry</h2><p>Wasz kod</p></div>
+    <span class="arrow">→</span>
+    <div class="box"><h2>Decyzja</h2><p>nagroda lub brak nagrody</p></div>
+  </div>
+  <p class="callout" style="margin-top:24px"><strong>Cel:</strong> połączyć wynik sieci z regułą gry i sprawdzić, jak <strong>próg ufności</strong> wpływa na błędne decyzje.</p>
+  <span class="num">2</span>
+</section>
+
+<section class="slide">
+  <div class="head"><h1>Co zwraca model?</h1></div>
+  <div class="two" style="grid-template-columns: 450px 1fr">
+    <div>
+      <img class="fig" src="img/detekcja.png" alt="Dwie butelki wykryte na zdjęciu łazienki, każda z ramką, nazwą klasy i ufnością">
+      <p class="caption">Model: yolo11n, 80 klas zbioru COCO</p>
+    </div>
+    <div>
+      <table>
+        <tr><th>Pojęcie</th><th>Co oznacza</th></tr>
+        <tr><td><strong>klasa</strong></td><td>co to jest: <code>bottle</code></td></tr>
+        <tr><td><strong>ramka</strong></td><td>gdzie to jest, w pikselach: <code style="white-space:nowrap">x1, y1, x2, y2</code></td></tr>
+        <tr><td><strong>ufność</strong></td><td>jak pewny jest model, od 0 do 1: <code>0.83</code></td></tr>
+      </table>
+      <p class="callout" style="margin-top:20px">Ufność to nie prawdopodobieństwo poprawności, tylko sygnał, który porównujemy z wybranym progiem.</p>
+    </div>
+  </div>
+  <span class="num">3</span>
+</section>
+
+<section class="slide">
+  <div class="head"><h1>Reguła gry</h1></div>
+  <div class="two" style="grid-template-columns: 1fr 440px">
+    <div>
+      <p class="lead"><strong>Strefa:</strong> środkowa 1/3 szerokości obrazu, na całej wysokości.</p>
+      <p style="margin-bottom:8px"><strong>Nagroda</strong>, gdy co najmniej jedna butelka spełnia oba warunki:</p>
+      <ol>
+        <li>jej ufność przekracza próg,</li>
+        <li><strong>środek</strong> jej ramki leży w strefie.</li>
+      </ol>
+      <p class="callout" style="margin-top:18px">Jedno zdjęcie daje najwyżej jedną nagrodę.</p>
+    </div>
+    <div>
+      <img class="fig" src="img/decyzja.png" alt="Zdjęcie ze strefą pośrodku, butelką w strefie i paskiem z decyzją NAGRODA">
+      <p class="caption">Zielona ramka przekracza próg, pomarańczowa nie.</p>
+    </div>
+  </div>
+  <span class="num">4</span>
+</section>
+
+<section class="slide">
+  <div class="head"><h1>Próg ufności: 0,25 czy 0,60?</h1></div>
+  <p class="lead">Decyzję gry porównujemy z etykietą referencyjną każdego zdjęcia:</p>
+  <table class="matrix">
+    <tr><th></th><th>gra dała nagrodę</th><th>gra odmówiła</th></tr>
+    <tr><td>etykieta: nagroda</td><td class="good">poprawna nagroda</td><td class="wrong">pominięta nagroda</td></tr>
+    <tr><td>etykieta: brak nagrody</td><td class="wrong">błędna nagroda</td><td class="good">poprawna odmowa</td></tr>
+  </table>
+  <p class="callout" style="margin-top:22px"><strong>Do sprawdzenia:</strong> skąd bierze się każda pomyłka? Brak detekcji, niepoprawna lokalizacja lub klasa, czy sama reguła gry?</p>
+  <p class="callout" style="margin-top:12px"><strong>Do przemyślenia:</strong> co bardziej szkodzi grze, nagroda bez powodu czy brak nagrody za poprawną akcję?</p>
+  <span class="num">5</span>
+</section>
+
+<section class="slide">
+  <div class="head"><h1>Narzędzia</h1></div>
+  <div class="two" style="grid-template-columns: 1fr 340px">
+    <table style="font-size:15.5px">
+      <tr><th>Plik</th><th>Co zawiera</th></tr>
+      <tr><td><code>warsztat3.ipynb</code></td><td>notatnik z TODO</td></tr>
+      <tr><td><code>data/</code></td><td>12 zdjęć i etykiety</td></tr>
+      <tr><td><code>yolo11n.pt</code></td><td>gotowy model</td></tr>
+      <tr><td><code>yolo_utils.py</code></td><td>funkcje pomocnicze</td></tr>
+      <tr><td><code>sprawdz_srodowisko.py</code></td><td>test instalacji</td></tr>
+      <tr><td><code>kamera.py</code></td><td>rozszerzenie</td></tr>
+      <tr><td><code>README.md</code>, <code>requirements.txt</code></td><td>uruchomienie i wersje</td></tr>
+      <tr><td><code>sprawozdanie_szablon.md</code></td><td>pusty szablon</td></tr>
+    </table>
+    <div class="card">
+      <h2>Uruchomienie</h2>
+      <ol style="font-size:15.5px">
+        <li><code>python -m venv .venv</code></li>
+        <li>aktywacja środowiska (README)</li>
+        <li><code>python -m pip install -r requirements.txt</code></li>
+        <li><code>python sprawdz_srodowisko.py</code></li>
+        <li><code>python -m notebook</code></li>
+      </ol>
+      <p style="font-size:14.5px;margin-top:10px;color:var(--muted)">Na Linuksie najpierw PyTorch na CPU, zgodnie z README.</p>
+    </div>
+  </div>
+  <div class="chips"><span class="chip">PYTHON 3.11+</span><span class="chip">ULTRALYTICS · OPENCV · JUPYTER</span><span class="chip">WYSTARCZY CPU</span></div>
+  <span class="num">6</span>
+</section>
+
+<section class="slide">
+  <div class="head"><h1>Plan pracy: macie 90 minut</h1></div>
+  <div class="plan">
+    <div class="step"><div class="time">0–10 min</div><h2>Start</h2><p>Role, sprawozdanie, ręczna ocena 2 zdjęć</p></div>
+    <div class="step"><div class="time">10–25 min</div><h2>Detekcja</h2><p>Model, odczyt ramek, wyznaczenie strefy</p></div>
+    <div class="step key"><div class="time">25–55 min</div><h2>Reguła gry</h2><p>Środek ramki, warunek strefy, decyzja o nagrodzie</p></div>
+    <div class="step"><div class="time">55–75 min</div><h2>Eksperyment</h2><p>12 zdjęć, 2 progi, przyczyny pomyłek</p></div>
+    <div class="step"><div class="time">75–90 min</div><h2>Oddanie</h2><p>Wnioski i wysyłka na Teams</p></div>
+  </div>
+  <p class="callout" style="margin-top:20px"><strong>Sprawozdanie uzupełniacie w trakcie ćwiczenia</strong>, nie dopiero pod koniec.</p>
+  <p style="margin-top:14px;font-size:16.5px">Skończyliście wcześniej? Otwórzcie <code>kamera.py</code>: punkt po 3 kolejnych klatkach, następny po opuszczeniu strefy.</p>
+  <span class="num">7</span>
+</section>
+
+<section class="slide">
+  <div class="head"><h1>Wyniki i demo</h1></div>
+  <div class="cols">
+    <div class="card">
+      <h2>Do końca 90 minut</h2>
+      <ol>
+        <li>Uzupełniony notatnik</li>
+        <li>Sprawozdanie: tabela obu progów, przyczyny pomyłek, wnioski</li>
+        <li>Dwa zrzuty: przykład poprawny i problematyczny</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Demo: 5–6 minut na zespół</h2>
+      <ol>
+        <li>Decyzja minigry na dwóch zdjęciach</li>
+        <li>Porównanie progów 0,25 i 0,60</li>
+        <li>Jeden błąd detekcji lub przyznania nagrody</li>
+      </ol>
+    </div>
+  </div>
+  <p style="margin-top:48px;font-size:36px;font-weight:700;text-align:center;color:var(--deep)">Powodzenia!</p>
+  <span class="num">8</span>
+</section>
+
+</body>
+</html>

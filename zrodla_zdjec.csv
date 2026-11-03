@@ -1,0 +1,13 @@
+file,coco_id,coco_license_id,coco_url,flickr_url
+img01.jpg,405691,3,http://images.cocodataset.org/val2017/000000405691.jpg,http://farm7.staticflickr.com/6118/6366361681_aa00c9cab4_z.jpg
+img02.jpg,302760,3,http://images.cocodataset.org/val2017/000000302760.jpg,http://farm5.staticflickr.com/4007/4245908434_1c8f10da61_z.jpg
+img03.jpg,559513,3,http://images.cocodataset.org/val2017/000000559513.jpg,http://farm4.staticflickr.com/3731/8969204913_9087b66bf8_z.jpg
+img04.jpg,294855,1,http://images.cocodataset.org/val2017/000000294855.jpg,http://farm1.staticflickr.com/52/115192671_f353d6dcdf_z.jpg
+img05.jpg,47121,2,http://images.cocodataset.org/val2017/000000047121.jpg,http://farm2.staticflickr.com/1432/1439410299_012ca34a4e_z.jpg
+img06.jpg,173091,1,http://images.cocodataset.org/val2017/000000173091.jpg,http://farm3.staticflickr.com/2884/9549240337_6b0d2f9d0e_z.jpg
+img07.jpg,463527,3,http://images.cocodataset.org/val2017/000000463527.jpg,http://farm3.staticflickr.com/2547/4100676417_25799a0a4e_z.jpg
+img08.jpg,384661,5,http://images.cocodataset.org/val2017/000000384661.jpg,http://farm4.staticflickr.com/3306/3557337965_41dbae9a6b_z.jpg
+img09.jpg,365385,5,http://images.cocodataset.org/val2017/000000365385.jpg,http://farm6.staticflickr.com/5044/5244459701_e310f8ceec_z.jpg
+img10.jpg,99039,1,http://images.cocodataset.org/val2017/000000099039.jpg,http://farm3.staticflickr.com/2535/5843392082_e63b00a5c0_z.jpg
+img11.jpg,120777,3,http://images.cocodataset.org/val2017/000000120777.jpg,http://farm2.staticflickr.com/1120/624166368_81bcfb5d76_z.jpg
+img12.jpg,136600,1,http://images.cocodataset.org/val2017/000000136600.jpg,http://farm9.staticflickr.com/8388/8467506866_efa631c5d0_z.jpg
