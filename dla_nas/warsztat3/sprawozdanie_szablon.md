@@ -34,13 +34,10 @@
 | Model | _[domyślnie yolo11n.pt]_ |
 | Porównywane progi ufności | _[domyślnie 0,25 i 0,60]_ |
 | Próg detekcji w `detect` | _[domyślnie 0,10]_ |
-| Urządzenie | _[CPU]_ |
 | Inne zmiany parametrów (jeśli były) | _[brak / opiszcie]_ |
 
 **Jak przeprowadziliśmy test:** _[uzupełnijcie]_
 
-### 3.1. Opcjonalne rozszerzenie
- _[uzupełnijcie lub usuńcie podsekcję]_
 
 ## 4. Wyniki
 
@@ -70,7 +67,32 @@
 
 **Nieudane próby lub problemy podczas pracy:** _[uzupełnijcie]_.
 
-## 5. Wnioski i ograniczenia
+## (5. Opcjonalne rozszerzenie: kamera)
+
+_Tę sekcję uzupełnijcie tylko wtedy, gdy wykonaliście rozszerzenie z pliku `kamera.py`._
+
+**Wykonane elementy:** _[np. `read_detections`, `bottle_in_zone`, `update_game`, obsługa kamery]_
+
+**Test logiki bez kamery:** uruchomienie `python kamera.py --test`
+
+**Wynik testu:** _[zaliczony / niezaliczony; opiszcie ewentualne błędy]_
+
+**Uruchomienie gry:**
+
+| Parametr | Użyta wartość |
+|---|---|
+| Próg ufności (`--threshold`) | _[uzupełnijcie]_ |
+| Źródło obrazu (`--source`) | _[np. `0` albo ścieżka do filmu]_ |
+| Tryb bez okna (`--no-window`) | _[tak / nie]_ |
+
+**Zasada przyznawania punktów:** punkt pojawia się po _[domyślnie: trzech]_ kolejnych klatkach z butelką w strefie. Kolejny punkt jest możliwy po _[domyślnie: trzech]_ kolejnych klatkach bez butelki w strefie.
+
+**Obserwacja z działania kamery:** _[opiszcie, jak zmiana progu, ruch przedmiotu lub oświetlenie wpłynęły na decyzje gry]_
+
+**Problemy i ograniczenia:** _[np. brak dostępu do kamery, opóźnienie, gubienie detekcji, fałszywe detekcje]_
+
+
+## 6. Wnioski i ograniczenia
 
 **Porównanie progów i wybór do minigry:** _[uzupełnijcie]_.
 
@@ -91,3 +113,4 @@
 | _[osoba 3]_ | _[uzupełnijcie]_ |
 | _[osoba 4]_ | _[uzupełnijcie]_ |
 | _[osoba 5, jeśli dotyczy]_ | _[uzupełnijcie]_ |
+
