@@ -69,7 +69,9 @@ Etykiety pochodzą z adnotacji COCO i zostały sprawdzone wzrokowo. Dwa przypadk
 
 ## Kamera
 
-`python kamera.py --test` przechodzi wszystkie 6 przypadków. Na filmie testowym (butelka w strefie, poza strefą, znów w strefie, próg 0,60) gra daje 2 punkty, z oknem i bez okna. **Prawdziwej kamery nie sprawdzano.**
+`python kamera.py --test` przechodzi wszystkie 6 przypadków. Na filmie testowym (butelka w strefie, poza strefą, znów w strefie, próg 0,60) gra daje 2 punkty, z oknem i bez okna.
+
+Z prawdziwą kamerą na Windowsie gra uruchamia się, a klawisz `q` kończy ją bez błędu i wypisuje punkty. Do potwierdzenia zostaje scenariusz punktów: blokada nieruchomej butelki, kolejny punkt po wyjściu ze strefy i brak punktów poza strefą.
 
 ## Typowe trudności
 
@@ -88,4 +90,4 @@ Etykiety pochodzą z adnotacji COCO i zostały sprawdzone wzrokowo. Dwa przypadk
 
 - [ ] Próba całego ćwiczenia z pomiarem czasu. Czas: _[uzupełnijcie]_.
 - [ ] Instalacja na typowym laptopie z Linuksem i macOS.
-- [ ] Sprawdzenie `kamera.py` z prawdziwą kamerą.
+- [ ] Sprawdzenie scenariusza punktów w `kamera.py` z prawdziwą kamerą.
