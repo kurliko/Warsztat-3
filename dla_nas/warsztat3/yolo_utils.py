@@ -35,8 +35,29 @@ class Sample:
 
 
 @dataclass(frozen=True)
+class Box:
+    """Jedna ramka zwrócona przez model. Zna tylko numer klasy, nie jej nazwę."""
+
+    class_id: int                            # numer klasy, np. 39; nazwę podaje słownik ModelResult.names
+    confidence: float                        # wynik ufności od 0 do 1
+    xyxy: tuple[float, float, float, float]  # (x1, y1, x2, y2): lewy górny i prawy dolny róg ramki
+
+
+@dataclass(frozen=True)
+class ModelResult:
+    """Wynik modelu dla jednego obrazu, czyli to, co zwraca funkcja detect.
+
+    Uproszczona wersja obiektu Results z biblioteki ultralytics. Zostawiamy w niej tylko
+    to, czego potrzebuje ćwiczenie, zapisane zwykłymi typami Pythona (int, float, tuple).
+    """
+
+    names: dict[int, str]  # słownik: numer klasy -> nazwa klasy, np. {0: "person", 39: "bottle"}
+    boxes: list[Box]       # wszystkie ramki wykryte na obrazie; pusta lista, gdy model nic nie znalazł
+
+
+@dataclass(frozen=True)
 class Detection:
-    """Jedna ramka wykryta przez model."""
+    """Jedna ramka wykryta przez model, już z nazwą klasy. Tworzy ją read_detections z notatnika."""
 
     class_name: str    # nazwa klasy, np. "bottle"
     confidence: float  # wynik ufności od 0 do 1
@@ -75,7 +96,10 @@ def load_samples(path: str | Path = "data/labels.csv") -> list[Sample]:
 
 
 def read_image(path: str | Path) -> np.ndarray:
-    """Przyjmuje ścieżkę. Zwraca obraz BGR; działa też dla ścieżek z polskimi znakami."""
+    """Przyjmuje ścieżkę. Zwraca obraz BGR; działa też dla ścieżek z polskimi znakami.
+
+    Obraz to tablica NumPy, a image.shape to (wysokość, szerokość, 3), np. (480, 640, 3).
+    """
     data = np.fromfile(str(path), dtype=np.uint8)
     image = cv2.imdecode(data, cv2.IMREAD_COLOR)
     if image is None:
@@ -83,9 +107,16 @@ def read_image(path: str | Path) -> np.ndarray:
     return image
 
 
-def detect(model, image: np.ndarray):
-    """Przyjmuje model i obraz BGR. Zwraca wynik modelu dla tego obrazu (obiekt Results)."""
-    return model.predict(image, conf=DETECTION_CONF, imgsz=IMAGE_SIZE, verbose=False)[0]
+def detect(model, image: np.ndarray) -> ModelResult:
+    """Przyjmuje model i obraz BGR. Uruchamia model i zwraca jego wynik jako ModelResult."""
+    raw = model.predict(image, conf=DETECTION_CONF, imgsz=IMAGE_SIZE, verbose=False)[0]
+    boxes = [
+        Box(int(class_id), float(confidence), tuple(xyxy))
+        for class_id, confidence, xyxy in zip(
+            raw.boxes.cls.tolist(), raw.boxes.conf.tolist(), raw.boxes.xyxy.tolist()
+        )
+    ]
+    return ModelResult(names=dict(raw.names), boxes=boxes)
 
 
 def draw_detections(

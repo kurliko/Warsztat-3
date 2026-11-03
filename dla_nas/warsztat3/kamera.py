@@ -28,8 +28,8 @@ def read_detections(result):
     # TODO: Wklej swoją funkcję read_detections z notatnika.
     detections = []
     for box in result.boxes:
-        x1, y1, x2, y2 = box.xyxy[0].tolist()
-        detections.append(Detection(result.names[int(box.cls[0])], float(box.conf[0]), x1, y1, x2, y2))
+        x1, y1, x2, y2 = box.xyxy
+        detections.append(Detection(result.names[box.class_id], box.confidence, x1, y1, x2, y2))
     return detections
 
 

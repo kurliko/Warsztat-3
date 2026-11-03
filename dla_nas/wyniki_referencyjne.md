@@ -77,7 +77,7 @@ Etykiety pochodzą z adnotacji COCO i zostały sprawdzone wzrokowo. Dwa przypadk
 |---|---|---|
 | Uruchomienie | `TypeError: 'ellipsis' object is not iterable` lub `not subscriptable` | W komórce lub w komórce wcześniejszej został `...`. To znaczy tylko, że luka nie jest jeszcze uzupełniona. |
 | Uruchomienie | `NameError` | Nie uruchomiono wcześniejszej komórki albo zakończyła się ona błędem. |
-| `read_detections` | `TypeError` przy ufności lub klasie | `box.conf` i `box.cls` to tensory. Tabela w sekcji 4 pokazuje, jak je odczytać. |
+| `read_detections` | W `Detection` jest numer klasy zamiast nazwy albo `AttributeError` | `box.class_id` to numer, nazwę daje `result.names[box.class_id]`. Pola `result` opisuje tabela w sekcji 4 i klasa `ModelResult` w `yolo_utils.py`. |
 | `get_zone` | Assert nie przechodzi albo strefa jest pusta | Szerokość to `image.shape[1]`, a `shape[0]` to wysokość. |
 | `reward_decision` | Każde zdjęcie daje nagrodę lub żadne | Sprawdzić `class_name == TARGET_CLASS` i to, czy `return False` nie jest wewnątrz pętli. |
 | Test progów | Oba progi dają ten sam wynik | Funkcja używa stałej zamiast parametru `threshold`. |
