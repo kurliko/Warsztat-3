@@ -88,7 +88,7 @@ def open_source(source: str) -> cv2.VideoCapture:
     if not capture.isOpened():
         sys.exit(
             f"Nie można otworzyć źródła obrazu: {source}. Sprawdź, czy kamera nie jest zajęta "
-            "i czy system pozwala terminalowi na dostęp do niej."
+            "i czy system pozwala Pythonowi na dostęp do niej (zob. README.md)."
         )
     return capture
 
@@ -108,26 +108,29 @@ def main() -> None:
     capture = open_source(args.source)
     state = GameState()
 
-    while True:
-        success, frame = capture.read()
-        if not success:
-            break
+    try:
+        while True:
+            success, frame = capture.read()
+            if not success:
+                break
 
-        width = frame.shape[1]
-        zone = (width / 3, 2 * width / 3)
-        detections = read_detections(detect(model, frame))
-        in_zone = bottle_in_zone(detections, zone, args.threshold)
-        update_game(state, in_zone)
+            width = frame.shape[1]
+            zone = (width / 3, 2 * width / 3)
+            detections = read_detections(detect(model, frame))
+            in_zone = bottle_in_zone(detections, zone, args.threshold)
+            update_game(state, in_zone)
 
-        if args.no_window:
-            continue
+            if args.no_window:
+                continue
 
-        canvas = draw_decision(frame, detections, zone, args.threshold, in_zone)
-        text = f"PUNKTY: {state.score}  SERIA: {state.streak}  BLOKADA: {'tak' if state.locked else 'nie'}"
-        cv2.putText(canvas, text, (8, canvas.shape[0] - 12), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow("Minigra z butelka (q konczy)", canvas)
-        if cv2.waitKey(1) & 0xFF == ord("q"):
-            break
+            canvas = draw_decision(frame, detections, zone, args.threshold, in_zone)
+            text = f"PUNKTY: {state.score}  SERIA: {state.streak}  BLOKADA: {'tak' if state.locked else 'nie'}"
+            cv2.putText(canvas, text, (8, canvas.shape[0] - 12), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2, cv2.LINE_AA)
+            cv2.imshow("Minigra z butelka (q konczy)", canvas)
+            if cv2.waitKey(1) & 0xFF == ord("q"):
+                break
+    except KeyboardInterrupt:
+        pass  # Ctrl+C w terminalu kończy grę tak samo jak klawisz q
 
     capture.release()
     cv2.destroyAllWindows()

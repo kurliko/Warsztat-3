@@ -38,5 +38,5 @@ Pełna instrukcja jest w `dla_nas/warsztat3/README.md`. Uruchomcie terminal w fo
 - [ ] Uzupełnić skład zespołu w prezentacji oraz skład, datę i przydział przewodników w `konspekt.md`.
 - [ ] Sprawdzić instalację na Linuksie i macOS.
 - [ ] Przeprowadzić próbę z pomiarem czasu i wpisać wynik do `dla_nas/wyniki_referencyjne.md`.
-- [ ] Sprawdzić `kamera.py` z prawdziwą kamerą.
+- [ ] Sprawdzić scenariusz punktów w `kamera.py` z prawdziwą kamerą.
 - [ ] Po każdej zmianie w `dla_studentow/warsztat3` spakować folder ponownie do zipa.
