@@ -60,5 +60,6 @@ Jeśli masz kilka kamer, wybierz inną opcją `--source 1`. Na macOS przy pierws
 ## Rozwiązywanie problemów
 
 - **Windows, błąd aktywacji środowiska w PowerShell:** uruchom `Set-ExecutionPolicy -Scope Process RemoteSigned` i spróbuj ponownie.
+- **Windows, kamera się nie otwiera:** wejdź w Ustawienia → Prywatność i zabezpieczenia → Kamera i włącz dostęp dla Pythona. Python ze Sklepu Microsoft ma tam osobny przełącznik, a przegapienie pytania Windowsa może zapisać odmowę.
 - **Brak modelu:** plik `yolo11n.pt` musi leżeć w tym folderze. Terminal i notatnik też muszą być uruchomione w tym folderze.
 - **Mac z procesorem Intel:** biblioteka PyTorch w tej wersji nie jest dostępna, więc poproś przewodnika o pomoc.
